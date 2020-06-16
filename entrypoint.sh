@@ -5,6 +5,7 @@ cp /action/problem-matcher.json /github/workflow/problem-matcher.json
 echo "::add-matcher::${RUNNER_TEMP}/_github_workflow/problem-matcher.json"
 
 echo "Review Laravel standards"
+git log -1
 changed_files=$(git log --pretty=oneline --name-only --diff-filter=d --pretty="format:" -- . ":(exclude,glob)html" | head -n1);
 echo -e "These are committed files for phpcs review:\n$changed_files";
 files_formatted="$(echo $changed_files | sed 's/ / .\//g')";
