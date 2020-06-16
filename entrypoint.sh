@@ -4,19 +4,12 @@ cp /action/problem-matcher.json /github/workflow/problem-matcher.json
 
 echo "::add-matcher::${RUNNER_TEMP}/_github_workflow/problem-matcher.json"
 
-if [ -n "${INPUT_INSTALLED_PATHS}" ]; then
-    ${INPUT_PHPCS_BIN_PATH} --config-set installed_paths "${INPUT_INSTALLED_PATHS}"
-fi
-
-if [ -z "${INPUT_ENABLE_WARNINGS}" ] || [ "${INPUT_ENABLE_WARNINGS}" = "false" ]; then
-    echo "Check for warnings disabled"
-
-    ${INPUT_PHPCS_BIN_PATH} -n --report=checkstyle
-else
-    echo "Check for warnings enabled"
-
-    ${INPUT_PHPCS_BIN_PATH} --report=checkstyle
-fi
+echo "Review Laravel standards"
+changed_files=$(git log -m -1 $CI_COMMIT_SHA --name-only --diff-filter=d --pretty="format:" -- . ":(exclude,glob)html");
+echo -e "These are committed files for phpcs review:\n$changed_files";
+files_formatted="$(echo $changed_files | sed 's/ / .\//g')";
+phpcs --config-show
+phpcs --ignore=.md,.js,.css,artisan,.png,.svg,.woff2,.woff,.ttf,.eot,*/Migrations/*,*blade.php --encoding=utf-8 -p --extensions=php "./"$files_formatted
 
 status=$?
 

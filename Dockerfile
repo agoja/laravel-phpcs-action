@@ -1,4 +1,4 @@
-FROM cytopia/phpcs:3
+FROM willhallonline/laravel-phpcs
 
 COPY entrypoint.sh \
      problem-matcher.json \
